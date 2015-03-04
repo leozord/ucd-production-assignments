@@ -2,6 +2,12 @@ __author__ = 'Leonardo Rafaeli'
 import pickle
 import os
 from argparse import ArgumentParser
+import re
+
+class OctetTree:
+    def __init__(self, octet, children):
+        self.octet = octet
+        self.children = children
 
 class IpInfo:
     def __init__(self, ipAddress, note):
@@ -33,23 +39,66 @@ def print_infos(infos):
 def main():
     parser = ArgumentParser(description="Insert and Lookup for IP addresses")
     parser.add_argument("-l", "--list", help="List all available IPs in the database", action="store_true")
-    parser.add_argument("-a", "--add", help="Add a new IP to the database", nargs=2, metavar=("IP", "NOTE"))
-    parser.add_argument("-sc", "--search-note", help="Search an IP by note", metavar="NOTE")
+    parser.add_argument("-a", "--add", help="Add a new IP to the database", nargs="+", metavar=("IP", "NOTES"))
+    parser.add_argument("-sc", "--search-note", help="Search an IP by note", metavar="NOTES")
     parser.add_argument("-si", "--search-ip", help="Search IP by address", metavar="IP")
     parser.add_argument("-sn", "--search-network", help="Search IP by network", metavar="IP")
 
-    args = parser.parse_args(["-sn", "127"])
+    args = parser.parse_args(["-a", "192.1.255.1/12"])
 
     if args.list:
         list_infos()
     if args.add:
-        save_info(args.add[0], args.add[1])
+        #save_info(args.add[0], args.add[1])
+        if not validate_ip(args.add[0]):
+            print("The %s is an invalid IP or Network" % args.add[0])
+        else:
+            print("%s is a valid IP/Network address" % args.add[0])
     if args.search_note:
         list_by_note(args.search_note)
     if args.search_ip:
         list_by_ip(args.search_ip)
     if args.search_network:
         list_by_network(args.search_network[0])
+
+def validate_ip(ip):
+    if not ip:
+        return False
+
+    networks = ip.split("/")
+
+    octets = networks[0].split(".")
+
+    if len(octets) > 4:
+        return False
+
+    for i in range(0, len(octets)):
+        octet = octets[i]
+        if not re.match("\d+", octet):
+            return False
+        octets[i] = int(octet)
+        if octets[i] > 255 or octets[i] < 0:
+            return False
+
+    if len(networks) == 2:
+        if re.match("\d+", networks[1]):
+            networks[1] = int(networks[1])
+            if networks[1] > 32 or networks[1] < 0:
+                return False
+        else:
+            return False;
+
+    if len(networks) == 1:
+        if len(octets) < 4:
+            return False
+        print("IP address")
+    elif len(networks) == 2:
+        print("Network address")
+    else:
+        return False
+
+    return True
+
 
 
 def list_infos():
