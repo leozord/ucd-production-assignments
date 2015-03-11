@@ -9,16 +9,37 @@ _ONE_DAY_IN_SECONDS = 60 * 60 * 24
 
 class AddressBookServer(addressbook_pb2.EarlyAdopterAddressBookServiceServicer):
 
+  def __init__(self):
+    self.data = []
+
   def Find(self, request, context):
-      pass
+      print("FIND request received")
+      result = []
+      for ab in self.data:
+        for p in ab.person:
+          if str(p.name.lower()).find(request.name.lower()) != 0:
+            result.append(ab)
+            break
+      response = addressbook_pb2.FindResponse()
+      for ab in result:
+        response.addressBook._values.append(ab)
+      return response
 
   def List(self, request, context):
-      pass
+      print("LIST request received")
+      response = addressbook_pb2.ListResponse()
+      for ab in self.data:
+        response.addressBook._values.append(ab)
+      return response
 
   def Add(self, request, context):
-      print("REQUEST RECEIVED")
-      print(request.SerializeToString())
-      print("REQUEST ENDED")
+      print("ADD request received")
+      for ab in request.addressBook:
+        self.data.append(ab)
+      responseMessage="Added succesfully. Number of Address Books: " + str(len(self.data))
+      response = addressbook_pb2.AddResponse()
+      response.response = responseMessage
+      return response
 
 
 def serve():
