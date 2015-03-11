@@ -7,22 +7,26 @@ service AddressBookService {
   rpc Add (AddRequest) returns (AddResponse) {}
 
   // List all address books
-  rpc List () returns (ListResponse) {}
+  rpc List (ListRequest) returns (ListResponse) {}
 
   // Find Address Books
   rpc Find (FindRequest) returns (FindResponse) {}
 }
 
 message AddRequest {
-  repeated AddressBook = 1;
+  repeated AddressBook addressBook = 1;
 }
 
 message AddResponse {
   required string response = 1;
 }
 
+message ListRequest {
+  optional string anyMessage = 1;
+}
+
 message ListResponse {
-  repeated AddressBook = 1;
+  repeated AddressBook addressBook = 1;
 }
 
 message FindRequest {
@@ -30,7 +34,7 @@ message FindRequest {
 }
 
 message FindResponse {
-  repeated AddressBook = 1;
+  repeated AddressBook addressBook = 1;
 }
 
 message Person {
