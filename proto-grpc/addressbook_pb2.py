@@ -199,4 +199,7 @@ AddressBook = _reflection.GeneratedProtocolMessageType('AddressBook', (_message.
 _sym_db.RegisterMessage(AddressBook)
 
 
+import abc
+from grpc.early_adopter import implementations
+from grpc.early_adopter import utilities
 # @@protoc_insertion_point(module_scope)
