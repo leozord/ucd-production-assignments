@@ -1,4 +1,4 @@
-//package tutorial;
+package tutorial;
 
 syntax = "proto2";
 
@@ -14,23 +14,7 @@ service AddressBookService {
 }
 
 message AddRequest {
-  repeated AddressBook = 1;
-}
-
-message AddResponse {
-  required string response = 1;
-}
-
-message ListResponse {
-  repeated AddressBook = 1;
-}
-
-message FindRequest {
-  required string name = 1;
-}
-
-message FindResponse {
-  repeated AddressBook = 1;
+  repeated AddressBook =
 }
 
 message Person {
